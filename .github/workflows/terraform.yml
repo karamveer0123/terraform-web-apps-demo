@@ -31,10 +31,20 @@ jobs:
         terraform_version: 1.9.4
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
+    # Log in to Azure
+    - name: Azure login
+      uses: azure/login@v1
+      with: 
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       working-directory: terraform-manifest
-      run: terraform init
+      run: terraform init -backend-config="storage_account_name=terraformstatefilegithub" \
+                          -backend-config="container_name=terraformstatefiles" \
+                          -backend-config="key=githubactions.tfstate" \
+                          -backend-config="access_key=${{ secrets.AZURE_STORAGE_ACCESS_KEY }}"
+
 
     # Checks that all Terraform configuration files adhere to a canonical format
     #- name: Terraform Format
@@ -44,3 +54,11 @@ jobs:
     - name: Terraform validate
       working-directory: terraform-manifest
       run: terraform validate
+    # terraform plan
+    - name: Terraform Plan
+      working-directory: terraform-manifest
+      run: terraform plan -out=tfplan
+    # terraform apply
+    - name: Terraform Apply
+      working-directory: terraform-manifest
+      run: terraform apply --auto-approve tfplan
