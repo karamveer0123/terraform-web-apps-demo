@@ -36,6 +36,9 @@ jobs:
       uses: azure/login@v1
       with: 
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: show azure account
+      working-directory: terraform-manifest
+      run: az account show 
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
