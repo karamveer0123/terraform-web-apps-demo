@@ -41,12 +41,6 @@ jobs:
     - name: Terraform Init
       working-directory: terraform-manifest
       run: terraform init -backend-config="storage_account_name=terraformstatefilegithub" -backend-config="container_name=terraformstatefiles" -backend-config="key=githubactions.tfstate" -backend-config="access_key=${{ secrets.AZURE_STORAGE_ACCESS_KEY }}"
-
-
-    # Checks that all Terraform configuration files adhere to a canonical format
-    #- name: Terraform Format
-     # working-directory: terraform-manifest
-     # run: terraform fmt -check
     # validate the terraform files 
     - name: Terraform validate
       working-directory: terraform-manifest
